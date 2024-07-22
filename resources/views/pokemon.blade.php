@@ -61,54 +61,59 @@
     <div class="modal fade" id="pokemonModal" tabindex="-1" aria-labelledby="pokemonModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
+                <div id="loading-spinner" class="spinner-border text-primary text-center" role="status" style="display: none;">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
                 <div class="modal-header">
                     <h5 class="modal-title" id="pokemonModalLabel"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="pokemonModalBody">
-                    <div id="loading-spinner" class="spinner-border text-primary text-center" role="status" style="display: none;">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
     <script>
-        const pokemonModal = document.getElementById('pokemonModal')
+        const pokemonModal = document.getElementById('pokemonModal');
+        const loadingSpinner = document.getElementById('loading-spinner');
         pokemonModal.addEventListener('show.bs.modal', event => {
+
+            loadingSpinner.style.display = 'block';
+
             const button = event.relatedTarget;
             const pokemonId = button.getAttribute('data-pokemon-id');
     
-            document.getElementById('loading-spinner').style.display = 'block';
             const modalBody = pokemonModal.querySelector('.modal-body');
-
-            fetch(`/pokemon/${pokemonId}`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('loading-spinner').style.display = 'none';
+            
+            $.ajax({
+                url: `/pokemon/${888889899889}`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    loadingSpinner.style.display = 'none';
 
                     const modalTitle = pokemonModal.querySelector('.modal-title');
-    
-                    modalTitle.textContent = data.descriptions[5].description;
-                    
                     modalBody.innerHTML = '';
-    
+
+                    modalTitle.textContent = data.descriptions[5].description; 
                     const detailsHtml = `
                         <p><strong>ID:</strong> ${data.id}</p>
                         <p><strong>Gene:</strong> ${data.gene_modulo}</p>
                         <p><strong>Posible Valor:</strong> ${data.possible_values.join(", ")}</p>
-                        </div>`; 
+                    `; 
                     modalBody.innerHTML = detailsHtml;
-                })
-                .catch(error => {
-                    document.getElementById('loading-spinner').style.display = 'none';
+                },
+                error: function(error) {
+                    loadingSpinner.style.display = 'none';
 
                     console.error('Error fetching Pokémon details:', error);
                     modalBody.textContent = 'Error al cargar los detalles del Pokémon.';
-                });
+                }
+            });
         })
     </script>
     
